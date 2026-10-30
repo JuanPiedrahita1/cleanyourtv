@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Quick settings opened by the remote's Settings button: the Inputs dropdown's glass panel, placed
-     under the Settings pill so it lines up on Home and sits top right over any app. -->
+<!-- Quick settings opened by the remote's Settings (or a mapped) button, laid out like the tvOS control center:
+     a large power tile, wide tiles for network, picture, Bluetooth and screensaver, and round buttons below.
+     Placed top right so it lines up under the Settings pill on Home and sits over any app. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrim"
     android:layout_width="match_parent"
@@ -9,20 +10,127 @@
     <LinearLayout
         android:id="@+id/panel"
         android:layout_width="wrap_content"
-        android:minWidth="220dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_marginTop="105dp"
         android:layout_marginEnd="56dp"
         android:orientation="vertical"
-        android:background="@drawable/glass_panel"
-        android:padding="6dp"
+        android:background="@drawable/cc_panel_bg"
+        android:padding="14dp"
         android:elevation="12dp">
 
         <LinearLayout
-            android:id="@+id/rows"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ccPower"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/cc_tile_bg"
+                android:focusable="true"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:src="@drawable/ic_power"
+                    android:tint="@drawable/pill_text"
+                    android:duplicateParentState="true"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/cc_power"
+                    android:textColor="@drawable/pill_text"
+                    android:duplicateParentState="true"
+                    android:textSize="15sp"
+                    android:fontFamily="@string/font_medium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ccWifi"
+                    style="@style/ControlCenterWideTile">
+                    <ImageView style="@style/ControlCenterTileIcon" android:src="@drawable/ic_wifi" />
+                    <TextView style="@style/ControlCenterTileText" android:text="@string/cc_wifi" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ccPicture"
+                    style="@style/ControlCenterWideTile"
+                    android:layout_marginTop="10dp">
+                    <ImageView style="@style/ControlCenterTileIcon" android:src="@drawable/ic_picture" />
+                    <TextView style="@style/ControlCenterTileText" android:text="@string/quick_picture" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ccBluetooth"
+                style="@style/ControlCenterHalfTile">
+                <ImageView style="@style/ControlCenterTileIcon" android:src="@drawable/ic_bluetooth" />
+                <TextView style="@style/ControlCenterTileText" android:text="@string/cc_bluetooth" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ccScreensaver"
+                style="@style/ControlCenterHalfTile"
+                android:layout_marginStart="10dp">
+                <ImageView style="@style/ControlCenterTileIcon" android:src="@drawable/ic_moon" />
+                <TextView style="@style/ControlCenterTileText" android:text="@string/cc_screensaver" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="314dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/ccSettings"
+                style="@style/ControlCenterRound"
+                android:src="@drawable/ic_settings"
+                android:contentDescription="@string/tv_settings" />
+
+            <ImageView
+                android:id="@+id/ccApps"
+                style="@style/ControlCenterRound"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_apps"
+                android:contentDescription="@string/quick_apps" />
+
+            <ImageView
+                android:id="@+id/ccMute"
+                style="@style/ControlCenterRound"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_volume_off"
+                android:contentDescription="@string/cc_mute" />
+
+            <ImageView
+                android:id="@+id/ccLauncher"
+                style="@style/ControlCenterRound"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_home_settings"
+                android:contentDescription="@string/launcher_settings" />
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

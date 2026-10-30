@@ -6,16 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * The panel the remote's Settings button opens when {@code settings_key_panel} is on (HomeKeyService):
- * a few glass rows under the Settings pill, over Home or whatever app is playing. Translucent and in a
- * task of its own, so the app behind keeps running and Back returns to it. Pressing Settings again
- * closes the panel.
+ * The panel the remote's Settings button opens when {@code settings_key_panel} is on (HomeKeyService), laid out
+ * like the tvOS control center: power, network, picture, Bluetooth and screensaver tiles over Home or whatever app
+ * is playing. Translucent and in a task of its own, so the app behind keeps running and Back returns to it.
+ * Pressing Settings again closes the panel.
  */
 public final class QuickSettingsActivity extends Activity {
     @Override
@@ -39,16 +36,21 @@ public final class QuickSettingsActivity extends Activity {
             panel.setLayoutParams(position);
         }
         findViewById(R.id.scrim).setOnClickListener(v -> finish());
-        LinearLayout rows = findViewById(R.id.rows);
-        addRow(rows, R.drawable.ic_settings, R.string.tv_settings, 0, SystemSettings.intent(this, Settings.ACTION_SETTINGS));
-        addRow(rows, R.drawable.ic_picture, R.string.quick_picture, 0, SystemSettings.intent(this, Settings.ACTION_DISPLAY_SETTINGS));
-        addRow(rows, R.drawable.ic_wifi, R.string.quick_network, 0, SystemSettings.intent(this, Settings.ACTION_WIFI_SETTINGS));
-        addRow(rows, R.drawable.ic_apps, R.string.quick_apps, R.string.quick_apps_hint,
-                SystemSettings.intent(this, Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS));
+        // The system power menu (Power off, Restart) through the Home key helper; it is the only one allowed to open it.
+        bind(R.id.ccPower, () -> {
+            if (HomeKeyService.canOpenPowerMenu()) HomeKeyService.openPowerMenu();
+            else Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show();
+        });
+        bind(R.id.ccWifi, SystemSettings.intent(this, Settings.ACTION_WIFI_SETTINGS));
+        bind(R.id.ccPicture, SystemSettings.intent(this, Settings.ACTION_DISPLAY_SETTINGS));
+        bind(R.id.ccBluetooth, SystemSettings.intent(this, Settings.ACTION_BLUETOOTH_SETTINGS));
+        bind(R.id.ccScreensaver, () -> RemoteKeys.runAction(this, "screensaver"));
+        bind(R.id.ccSettings, SystemSettings.intent(this, Settings.ACTION_SETTINGS));
+        bind(R.id.ccApps, SystemSettings.intent(this, Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS));
+        bind(R.id.ccMute, () -> RemoteKeys.runAction(this, "mute"));
         // Through Home, so it rebuilds with the new choices when Launcher settings closes.
-        addRow(rows, R.drawable.ic_home_settings, R.string.launcher_settings, 0,
-                new Intent(this, MainActivity.class).setAction(MainActivity.ACTION_LAUNCHER_SETTINGS));
-        rows.getChildAt(0).requestFocus();
+        bind(R.id.ccLauncher, new Intent(this, MainActivity.class).setAction(MainActivity.ACTION_LAUNCHER_SETTINGS));
+        findViewById(R.id.ccPower).requestFocus();
     }
 
     /** Settings pressed again while the panel is up. */
@@ -66,22 +68,20 @@ public final class QuickSettingsActivity extends Activity {
         overridePendingTransition(0, 0);
     }
 
-    private void addRow(LinearLayout rows, int icon, int title, int status, Intent target) {
-        View row = getLayoutInflater().inflate(R.layout.item_input, rows, false);
-        ((ImageView) row.findViewById(R.id.icon)).setImageResource(icon);
-        ((TextView) row.findViewById(R.id.title)).setText(title);
-        row.findViewById(R.id.dot).setVisibility(View.GONE);
-        TextView hint = row.findViewById(R.id.status);
-        if (status != 0) hint.setText(status);
-        else hint.setVisibility(View.GONE);
-        row.setOnClickListener(v -> {
+    private void bind(int id, Intent target) {
+        bind(id, () -> {
             try {
                 startActivity(target.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             } catch (ActivityNotFoundException | SecurityException e) {
                 Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show();
             }
+        });
+    }
+
+    private void bind(int id, Runnable action) {
+        findViewById(id).setOnClickListener(v -> {
+            action.run();
             finish();
         });
-        rows.addView(row);
     }
 }
