@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -44,6 +45,14 @@ public final class QuickSettingsActivity extends Activity {
         bind(R.id.ccWifi, SystemSettings.intent(this, Settings.ACTION_WIFI_SETTINGS));
         bind(R.id.ccPicture, SystemSettings.intent(this, Settings.ACTION_DISPLAY_SETTINGS));
         bind(R.id.ccBluetooth, SystemSettings.intent(this, Settings.ACTION_BLUETOOTH_SETTINGS));
+        // Sleep timer: each press steps 15, 30, 60, 90 minutes and off; the panel stays open to keep stepping.
+        TextView sleepText = findViewById(R.id.ccSleepText);
+        showSleep(sleepText, SleepTimer.minutesLeft(this));
+        findViewById(R.id.ccSleep).setOnClickListener(v -> {
+            int minutes = SleepTimer.nextStep(SleepTimer.minutesLeft(this));
+            SleepTimer.set(this, minutes);
+            showSleep(sleepText, minutes);
+        });
         bind(R.id.ccScreensaver, () -> RemoteKeys.runAction(this, "screensaver"));
         bind(R.id.ccSettings, SystemSettings.intent(this, Settings.ACTION_SETTINGS));
         bind(R.id.ccApps, SystemSettings.intent(this, Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS));
@@ -66,6 +75,11 @@ public final class QuickSettingsActivity extends Activity {
         super.onPause();
         finish();
         overridePendingTransition(0, 0);
+    }
+
+    private void showSleep(TextView label, int minutes) {
+        if (minutes > 0) label.setText(getString(R.string.cc_sleep_on, minutes));
+        else label.setText(R.string.cc_sleep);
     }
 
     private void bind(int id, Intent target) {

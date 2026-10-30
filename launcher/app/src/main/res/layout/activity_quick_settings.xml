@@ -90,11 +90,14 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ccScreensaver"
+                android:id="@+id/ccSleep"
                 style="@style/ControlCenterHalfTile"
                 android:layout_marginStart="10dp">
-                <ImageView style="@style/ControlCenterTileIcon" android:src="@drawable/ic_moon" />
-                <TextView style="@style/ControlCenterTileText" android:text="@string/cc_screensaver" />
+                <ImageView style="@style/ControlCenterTileIcon" android:src="@drawable/ic_timer" />
+                <TextView
+                    android:id="@+id/ccSleepText"
+                    style="@style/ControlCenterTileText"
+                    android:text="@string/cc_sleep" />
             </LinearLayout>
         </LinearLayout>
 
@@ -114,21 +117,28 @@
             <ImageView
                 android:id="@+id/ccApps"
                 style="@style/ControlCenterRound"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="12dp"
                 android:src="@drawable/ic_apps"
                 android:contentDescription="@string/quick_apps" />
 
             <ImageView
                 android:id="@+id/ccMute"
                 style="@style/ControlCenterRound"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="12dp"
                 android:src="@drawable/ic_volume_off"
                 android:contentDescription="@string/cc_mute" />
 
             <ImageView
+                android:id="@+id/ccScreensaver"
+                style="@style/ControlCenterRound"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/ic_moon"
+                android:contentDescription="@string/cc_screensaver" />
+
+            <ImageView
                 android:id="@+id/ccLauncher"
                 style="@style/ControlCenterRound"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="12dp"
                 android:src="@drawable/ic_home_settings"
                 android:contentDescription="@string/launcher_settings" />
         </LinearLayout>

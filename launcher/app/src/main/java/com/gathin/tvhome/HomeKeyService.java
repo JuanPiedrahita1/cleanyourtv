@@ -367,6 +367,14 @@ public class HomeKeyService extends AccessibilityService {
         if (service != null) service.performGlobalAction(GLOBAL_ACTION_POWER_DIALOG);
     }
 
+    /** Standby now, for the control center's sleep timer (SleepTimer); Android has the lock action from 28. */
+    static void sleepNow() {
+        HomeKeyService service = running;
+        if (service != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            service.performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN);
+        }
+    }
+
     static boolean powerOnRedirect(String liveTv, CharSequence pkg, long now, long armedUntil) {
         return !liveTv.isEmpty() && pkg != null && liveTv.contentEquals(pkg) && now < armedUntil;
     }

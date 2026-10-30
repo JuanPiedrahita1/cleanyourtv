@@ -136,6 +136,10 @@
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+        <!-- The control center's sleep timer going off (SleepTimer). -->
+        <receiver
+            android:name=".SleepTimer$Receiver"
+            android:exported="false" />
         <activity
             android:name=".HomeSettingsActivity"
             android:exported="false"

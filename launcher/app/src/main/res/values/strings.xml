@@ -161,4 +161,6 @@
     <string name="cc_bluetooth" translatable="false">Bluetooth</string>
     <string name="cc_screensaver" translatable="false">Protector</string>
     <string name="cc_mute" translatable="false">Silencio</string>
+    <string name="cc_sleep" translatable="false">Temporizador</string>
+    <string name="cc_sleep_on" translatable="false">Apagar en %1$d min</string>
 </resources>
