@@ -21,9 +21,9 @@ jobs:
           DEBUG_KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_B64 }}
         run: |
           if [ -n "$DEBUG_KEYSTORE_B64" ]; then
-            mkdir -p ~/.android
-            printf '%s' "$DEBUG_KEYSTORE_B64" | tr -cd 'A-Za-z0-9+/=' | base64 -d > ~/.android/debug.keystore
-            keytool -list -keystore ~/.android/debug.keystore -storepass android | grep -i androiddebugkey
+            printf '%s' "$DEBUG_KEYSTORE_B64" | tr -cd 'A-Za-z0-9+/=' | base64 -d > "$RUNNER_TEMP/tvhome.keystore"
+            keytool -list -v -keystore "$RUNNER_TEMP/tvhome.keystore" -storepass android | grep -E 'Alias|SHA256'
+            echo "TVHOME_KEYSTORE=$RUNNER_TEMP/tvhome.keystore" >> "$GITHUB_ENV"
           fi
       - name: Build
         working-directory: launcher
