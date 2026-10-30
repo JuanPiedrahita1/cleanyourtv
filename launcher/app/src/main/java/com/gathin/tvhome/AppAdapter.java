@@ -113,8 +113,11 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return Math.max(Math.round(80 * density), Math.min(design, fit));
     }
 
+    /** Tile height over width: the banner's 16:9-ish design, or 1 for the square tiles of ps4_layout (MainActivity). */
+    static float tileRatio = DESIGN_H_DP / DESIGN_W_DP;
+
     static int tileHeightPx(int tileWidthPx) {
-        return Math.round(tileWidthPx * DESIGN_H_DP / DESIGN_W_DP);
+        return Math.round(tileWidthPx * tileRatio);
     }
 
     /** Height of one grid item: the tile, the name label under it and the item's own padding. */

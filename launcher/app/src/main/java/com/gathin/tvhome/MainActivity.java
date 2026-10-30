@@ -247,6 +247,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean dockRow;
     /** config single_row: every app in the dock's row, scrolling sideways, no grid below. */
     private boolean singleRow;
+    /** config.xml ps4_layout: with single_row, square tiles near the top and the app's name under the row. */
+    private boolean ps4Layout;
+    /** Top of the ps4_layout row, below the clock. */
+    private static final float PS4_ROW_TOP_DP = 150;
+    /** Height of the focused tile, for placing the name under the row in ps4_layout. */
+    private int ps4CardH;
     /** The highlight springs past its target (config.xml, focus_overshoot); false goes straight there. */
     private boolean focusOvershoot;
     /** Festive skin from the theme (see Festival); applied while it is active today. */
@@ -446,6 +452,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         reducedMotion = cfg.reducedMotion;
         dockRow = cfg.dockRow;
         singleRow = cfg.singleRow;
+        ps4Layout = singleRow && dockRow && getResources().getBoolean(R.bool.ps4_layout);
+        AppAdapter.tileRatio = ps4Layout ? 1f : AppAdapter.DESIGN_H_DP / AppAdapter.DESIGN_W_DP;
         focusOvershoot = cfg.focusOvershoot;
         festival = cfg.festival;
         festive = festival.active(LocalDate.now());
@@ -674,6 +682,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // A single row never shows the names under its tiles (the title above the row names the app), so the
             // 7dp gap and 22dp label item_app.xml keeps for them would only lift the row: sit it that much lower.
             if (singleRow && !cfg.alwaysShowNames) want += (int) (29 * density);
+            // ps4_layout: the row sits just under the clock instead of at the bottom of the screen.
+            if (ps4Layout) want = (int) (PS4_ROW_TOP_DP * density);
             if (grid.getPaddingTop() != want) {
                 grid.setPadding(grid.getPaddingLeft(), want, grid.getPaddingRight(), grid.getPaddingBottom());
                 // A vertical grid parks the dock on the new padding line by scrolling (onTileFocused); a sideways
@@ -1772,6 +1782,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 if (!animations || reducedMotion) grid.scrollBy(0, dy);
                 else grid.smoothScrollBy(0, dy);
             }
+            ps4CardH = card.getHeight();
             showHero(position, scroll ? r.top - dy : r.top);
         } else {
             // Below the dock (or in a plain grid) the glow follows the tile without the big name; letting it
@@ -1804,7 +1815,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void showHero(int position, float dockTopInRoot) {
         String label = adapter.labelAt(position);
         int color = adapter.ambientColorAt(position);
-        float y = dockTopInRoot - 14 * density - 26 * density - hero.getHeight();
+        float y = ps4Layout
+                ? dockTopInRoot + ps4CardH * adapter.focusScale() + 28 * density   // under the row
+                : dockTopInRoot - 14 * density - 26 * density - hero.getHeight();
         boolean changed = !label.contentEquals(heroName.getText());
         if (cinematic && heroArtAlpha > 0f) showHeroArt(position);
 
